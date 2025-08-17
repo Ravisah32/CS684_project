@@ -1,0 +1,217 @@
+node calculatePID(error: int) returns (pidvalue: int)
+var p,i,d,previousError: int;
+let 
+     previousError = 0 -> pre(error);
+     p = error;
+     i = error -> (error + previousError);
+     d = error -> (error - previousError);
+
+     pidvalue = (3 * p + 2 * i + 5 * d) / 10; 
+
+tel
+
+node controller(pidvalue: int; bow: bool) returns (v_l, v_r: int)
+let
+               v_r = 0 -> 45 - (pidvalue / 7);
+               v_l = 0 -> 45 + (pidvalue / 7);
+tel
+
+node main(sen0, sen1, sen2, sen3, sen4: int; ir: bool) returns (v_l, v_r: int)
+var sen_binary: bool^5; sens0, sens1, sens2, sens3, sens4: int; bow: bool;
+let
+     -- check if black on white or white on black
+     bow = false -> pre(bow) or ((fold<<5>>(+)([sen0 , sen1 , sen2 , sen3 , sen4], 0) > 3800) and sen0 > 450 and sen4 > 450);
+     sens0 = if bow then 1023 - sen0 else sen0;
+     sens1 = if bow then 1023 - sen1 else sen1;
+     sens2 = if bow then 1023 - sen2 else sen2;
+     sens3 = if bow then 1023 - sen3 else sen3;
+     sens4 = if bow then 1023 - sen4 else sen4;
+     
+     -- get binary array for junction detection
+     sen_binary = if not bow then [
+          if sen0 > 450 then true else false,
+          if sen1 > 450 then true else false,
+          if sen2 > 450 then true else false,
+          if sen3 > 450 then true else false,
+          if sen4 > 450 then true else false
+     ] else [
+          if sen0 < 650 then true else false,
+          if sen1 < 650 then true else false,
+          if sen2 < 650 then true else false,
+          if sen3 < 650 then true else false,
+          if sen4 < 650 then true else false
+     ];
+     
+     automaton
+          state Normal
+               var pidvalue, tmp, error: int;
+               do
+                    -- add weight to the sensors in correct order
+                    tmp = (-100 * sens0 
+                         + (-50) * sens1 
+                         + (50) * sens3 
+                         + 100 * sens4) 
+                         / 100;
+
+                    -- cutoff |values| grater than 1023 
+                    error = 
+                         if tmp > 1023 then 1023
+                         else if tmp < -1023 then -1023
+                         else tmp;
+                         
+                    pidvalue = calculatePID(error);
+                    (v_l, v_r) = controller(pidvalue, bow);
+               until (not fold<<5>>(or)(sen_binary, false)) or (bow and ir) then SearchLine
+               unless fold<<3>>(&)([sen_binary[1],sen_binary[2],sen_binary[3]],true) and bow then BlackDot
+               
+          state SearchLine
+               do
+                    v_l = -100;
+                    v_r = 100;
+               until fold<<5>>(or)(sen_binary, false) then Normal
+               unless ir then ObstacleAvoidance
+
+          state ObstacleAvoidance
+               var tick: int;
+               do   
+                    tick = 25 -> pre(tick)-1;
+                    v_l = 80;
+                    v_r = -80;
+               until not fold<<5>>(or)(sen_binary, false) then FollowObstacle
+
+          state FollowObstacle
+               var tick: int;
+               do
+                    tick = 75 -> pre(tick)-1;
+                    v_l = 65;  
+                    v_r = 65;
+               until tick = 0 or ir then SearchObstac 
+               unless fold<<5>>(or)(sen_binary, false) then BackToLine
+
+          state BackToLine
+               var tick: int;
+               do
+                    tick = 100 -> pre(tick)-1;
+                    v_l = 40;
+                    v_r = -40;
+               until tick = 0 then Normal 
+
+          state SearchObstac
+               var tick: int;
+               do
+                    tick = 30 -> pre(tick)-1;
+                    v_l = -70;
+                    v_r = 70;
+               until tick = 0 then FollowObstacle 
+               unless ir then Right
+
+          state Right
+               var tick: int;
+               do
+                    tick = 40 -> pre(tick)-1;
+                    v_l = 70;
+                    v_r = -70;
+               until tick = 0 then FollowObstacle
+
+               
+          state BlackDot
+               var tick: int;
+               do
+                    tick = 30 -> pre(tick)-1;
+                    v_l = 80;
+                    v_r = 80;
+               until tick <= 0 then Left
+	  	
+	     state Left
+               var tick: int;
+               do
+                    tick = 60 -> pre(tick) - 1;
+                    v_l = -100;
+                    v_r = 100;
+               until tick <= 0 then CheckLine
+	  	
+	     state CheckLine
+               do
+                    v_l = 100;
+                    v_r = -100;
+               until sen_binary[2] or sen_binary[1] or sen_binary[3] then Straight
+
+           state Straight
+               var tick: int;pidvalue, tmp, error: int;
+               do
+                    tick = 150 -> pre(tick) - 1;
+                    -- add weight to the sensors in correct order
+                    tmp = (-100 * sens0 
+                         + (-50) * sens1 
+                         + (50) * sens3 
+                         + 100 * sens4) 
+                         / 100;
+
+                    -- cutoff |values| grater than 1023 
+                    error = 
+                         if tmp > 1023 then 1023
+                         else if tmp < -1023 then -1023
+                         else tmp;
+                         
+                    pidvalue = calculatePID(error);
+                    (v_l, v_r) = controller(pidvalue, bow);
+               until tick <= 0 then Normal
+               unless fold<<3>>(&)([sen_binary[1],sen_binary[2],sen_binary[3]],true) and bow then Parken
+          
+           state Parken
+               var tick: int;pidvalue, tmp, error: int;
+               do
+                    tick = 350 -> pre(tick) - 1;
+                    -- add weight to the sensors in correct order
+                    tmp = (-100 * sens0 
+                         + (-50) * sens1 
+                         + (50) * sens3 
+                         + 100 * sens4) 
+                         / 100;
+
+                    -- cutoff |values| grater than 1023 
+                    error = 
+                         if tmp > 1023 then 1023
+                         else if tmp < -1023 then -1023
+                         else tmp;
+                         
+                    pidvalue = calculatePID(error);
+                    (v_l, v_r) = controller(pidvalue, bow);
+               until tick <= 0 then CheckLeft
+
+          state CheckLeft
+               var tick: int;
+               do
+                    tick = 40 -> pre(tick) - 1;
+                    v_l = -100;
+                    v_r = 100;
+               until tick <= 0 then CheckIR
+
+          state CheckIR 
+               do 
+                    v_l = 0;
+                    v_r = 0;
+               until not ir then GrandeFinale
+               unless ir then CheckLineParking
+
+          state CheckLineParking
+               do
+                    v_l = 100;
+                    v_r = -100;
+              until fold<<5>>(or)(sen_binary, false) then Parken
+          
+          state GrandeFinale
+               var tick: int;
+               do
+                    tick = 100 -> pre(tick) - 1;
+                    v_l = 100;
+                    v_r = 100;
+               until tick <= 0 then JustParking
+
+          state JustParking
+               do
+                    v_l = 0;
+                    v_r = 0;
+               until false then GrandeFinale
+     end
+tel

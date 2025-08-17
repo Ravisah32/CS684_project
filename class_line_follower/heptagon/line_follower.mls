@@ -1,0 +1,514 @@
+type st = St_Straight|St_SearchObstac|St_SearchLine|St_Right|St_Parken|
+  St_ObstacleAvoidance|St_Normal|St_Left|St_JustParking|St_GrandeFinale|
+  St_FollowObstacle|St_CheckLineParking|St_CheckLine|St_CheckLeft|St_CheckIR|
+  St_BlackDot|St_BackToLine
+node calculatePID(error : int) returns (pidvalue : int)
+var previousError : int; d : int; i : int; p : int; v : bool; v_1 : int;
+    v_2 : bool; v_3 : int; v_4 : bool; v_5 : int; v_6 : int; v_7 : int;
+    v_8 : int; v_9 : int; v_10 : int;
+let
+  pidvalue = (v_10 / 10);
+  v_10 = (v_8 + v_9);
+  v_9 = (5 * d);
+  v_8 = (v_6 + v_7);
+  v_7 = (2 * i);
+  v_6 = (3 * p);
+  d = if v_4 then error else v_5;
+  v_5 = (error - previousError);
+  v_4 = true fby false;
+  i = if v_2 then error else v_3;
+  v_3 = (error + previousError);
+  v_2 = true fby false;
+  p = error;
+  previousError = if v then 0 else v_1;
+  v_1 = pre error;
+  v = true fby false
+tel
+
+node controller(pidvalue : int; bow : bool) returns (v_l : int; v_r : int)
+var v : bool; v_11 : int; v_12 : int; v_13 : bool; v_14 : int; v_15 : int;
+let
+  v_l = if v_13 then 0 else v_15;
+  v_15 = (45 + v_14);
+  v_14 = (pidvalue / 7);
+  v_13 = true fby false;
+  v_r = if v then 0 else v_12;
+  v_12 = (45 - v_11);
+  v_11 = (pidvalue / 7);
+  v = true fby false
+tel
+
+node main(sen0 : int; sen1 : int; sen2 : int; sen3 : int; sen4 : int;
+           ir : bool)
+returns (v_l : int; v_r : int)
+var bow : bool; sens4 : int; sens3 : int; sens2 : int; sens1 : int;
+    sens0 : int; sen_binary : bool^5; pnr : bool; nr : bool; r : bool;
+    ns : st; s : st; v : bool; v_16 : bool; v_17 : int^5; v_18 : int;
+    v_19 : bool; v_20 : bool; v_21 : bool; v_22 : bool; v_23 : bool;
+    v_24 : bool; v_25 : int; v_26 : int; v_27 : int; v_28 : int; v_29 : int;
+    v_30 : bool; v_31 : bool; v_32 : bool; v_33 : bool; v_34 : bool;
+    v_35 : bool; v_36 : bool; v_37 : bool; v_38 : bool; v_39 : bool;
+    v_40 : bool; v_41 : bool^5; v_42 : bool; v_43 : bool; v_44 : bool;
+    v_45 : bool; v_46 : bool; v_47 : bool; v_48 : bool; v_49 : bool;
+    v_50 : bool; v_51 : bool; v_52 : bool^5; ck_1 : st; v_l_St_Normal : int;
+    v_r_St_Normal : int; ns_St_Normal : st; nr_St_Normal : bool;
+    v_l_St_SearchLine : int; v_r_St_SearchLine : int; ns_St_SearchLine : st;
+    nr_St_SearchLine : bool; v_l_St_ObstacleAvoidance : int;
+    v_r_St_ObstacleAvoidance : int; ns_St_ObstacleAvoidance : st;
+    nr_St_ObstacleAvoidance : bool; v_l_St_FollowObstacle : int;
+    v_r_St_FollowObstacle : int; ns_St_FollowObstacle : st;
+    nr_St_FollowObstacle : bool; v_l_St_BackToLine : int;
+    v_r_St_BackToLine : int; ns_St_BackToLine : st; nr_St_BackToLine : bool;
+    v_l_St_SearchObstac : int; v_r_St_SearchObstac : int;
+    ns_St_SearchObstac : st; nr_St_SearchObstac : bool; v_l_St_Right : int;
+    v_r_St_Right : int; ns_St_Right : st; nr_St_Right : bool;
+    v_l_St_BlackDot : int; v_r_St_BlackDot : int; ns_St_BlackDot : st;
+    nr_St_BlackDot : bool; v_l_St_Left : int; v_r_St_Left : int;
+    ns_St_Left : st; nr_St_Left : bool; v_l_St_CheckLine : int;
+    v_r_St_CheckLine : int; ns_St_CheckLine : st; nr_St_CheckLine : bool;
+    v_l_St_Straight : int; v_r_St_Straight : int; ns_St_Straight : st;
+    nr_St_Straight : bool; v_l_St_Parken : int; v_r_St_Parken : int;
+    ns_St_Parken : st; nr_St_Parken : bool; v_l_St_CheckLeft : int;
+    v_r_St_CheckLeft : int; ns_St_CheckLeft : st; nr_St_CheckLeft : bool;
+    v_l_St_CheckIR : int; v_r_St_CheckIR : int; ns_St_CheckIR : st;
+    nr_St_CheckIR : bool; v_l_St_CheckLineParking : int;
+    v_r_St_CheckLineParking : int; ns_St_CheckLineParking : st;
+    nr_St_CheckLineParking : bool; v_l_St_GrandeFinale : int;
+    v_r_St_GrandeFinale : int; ns_St_GrandeFinale : st;
+    nr_St_GrandeFinale : bool; v_l_St_JustParking : int;
+    v_r_St_JustParking : int; ns_St_JustParking : st;
+    nr_St_JustParking : bool; error : int; tmp : int; pidvalue : int;
+    r_5 : bool; r_6 : bool; v_151 : bool; v_152 : bool; v_153 : bool;
+    v_154 : bool; v_155 : int; v_156 : int; v_157 : int; v_158 : int;
+    v_159 : int; v_160 : int; v_161 : int; v_162 : bool; v_163 : bool;
+    v_164 : int; v_150 : bool; tick : int; v_144 : bool; v_145 : bool;
+    v_146 : bool; v_147 : bool; v_148 : int; v_149 : int; tick_1 : int;
+    v_138 : bool; v_139 : bool; v_140 : bool; v_141 : bool; v_142 : int;
+    v_143 : int; tick_2 : int; v_133 : bool; v_134 : bool; v_135 : bool;
+    v_136 : int; v_137 : int; tick_3 : int; v_128 : bool; v_129 : bool;
+    v_130 : bool; v_131 : int; v_132 : int; tick_4 : int; v_123 : bool;
+    v_124 : bool; v_125 : bool; v_126 : int; v_127 : int; tick_5 : int;
+    v_118 : bool; v_119 : bool; v_120 : bool; v_121 : int; v_122 : int;
+    tick_6 : int; v_113 : bool; v_114 : bool; v_115 : bool; v_116 : int;
+    v_117 : int; v_108 : bool; v_109 : bool; v_110 : bool; v_111 : bool;
+    v_112 : bool; error_1 : int; tmp_1 : int; pidvalue_1 : int; tick_7 : int;
+    r_3 : bool; r_4 : bool; v_93 : bool; v_94 : bool; v_95 : bool;
+    v_96 : int; v_97 : int; v_98 : int; v_99 : int; v_100 : int; v_101 : int;
+    v_102 : int; v_103 : int; v_104 : int; v_105 : bool; v_106 : bool;
+    v_107 : int; error_2 : int; tmp_2 : int; pidvalue_2 : int; tick_8 : int;
+    r_1 : bool; r_2 : bool; v_78 : bool; v_79 : bool; v_80 : bool;
+    v_81 : int; v_82 : int; v_83 : int; v_84 : int; v_85 : int; v_86 : int;
+    v_87 : int; v_88 : int; v_89 : int; v_90 : bool; v_91 : bool; v_92 : int;
+    tick_9 : int; v_73 : bool; v_74 : bool; v_75 : bool; v_76 : int;
+    v_77 : int; v_72 : bool; v_71 : bool; tick_10 : int; v_66 : bool;
+    v_67 : bool; v_68 : bool; v_69 : int; v_70 : int; ck : st;
+    s_St_Normal : st; r_St_Normal : bool; s_St_SearchLine : st;
+    r_St_SearchLine : bool; s_St_ObstacleAvoidance : st;
+    r_St_ObstacleAvoidance : bool; s_St_FollowObstacle : st;
+    r_St_FollowObstacle : bool; s_St_BackToLine : st; r_St_BackToLine : bool;
+    s_St_SearchObstac : st; r_St_SearchObstac : bool; s_St_Right : st;
+    r_St_Right : bool; s_St_BlackDot : st; r_St_BlackDot : bool;
+    s_St_Left : st; r_St_Left : bool; s_St_CheckLine : st;
+    r_St_CheckLine : bool; s_St_Straight : st; r_St_Straight : bool;
+    s_St_Parken : st; r_St_Parken : bool; s_St_CheckLeft : st;
+    r_St_CheckLeft : bool; s_St_CheckIR : st; r_St_CheckIR : bool;
+    s_St_CheckLineParking : st; r_St_CheckLineParking : bool;
+    s_St_GrandeFinale : st; r_St_GrandeFinale : bool; s_St_JustParking : st;
+    r_St_JustParking : bool; v_60 : bool; v_61 : bool; v_62 : bool;
+    v_63 : bool^3; v_64 : bool; v_65 : bool; v_59 : bool; v_53 : bool;
+    v_54 : bool; v_55 : bool; v_56 : bool^3; v_57 : bool; v_58 : bool;
+let
+  pnr = false fby nr;
+  ck_1 = s;
+  (v_l_St_Normal, v_r_St_Normal) =
+    controller(pidvalue, (bow when St_Normal(ck_1))) every r_6;
+  pidvalue = calculatePID(error) every r_5;
+  error = if v_162 then 1023 else v_164;
+  v_164 = if v_163 then ~-(1023) else tmp;
+  v_163 = (tmp < ~-(1023));
+  v_162 = (tmp > 1023);
+  tmp = (v_161 / 100);
+  v_161 = (v_159 + v_160);
+  v_160 = (100 * (sens4 when St_Normal(ck_1)));
+  v_159 = (v_157 + v_158);
+  v_158 = (50 * (sens3 when St_Normal(ck_1)));
+  v_157 = (v_155 + v_156);
+  v_156 = (~-(50) * (sens1 when St_Normal(ck_1)));
+  v_155 = (~-(100) * (sens0 when St_Normal(ck_1)));
+  nr_St_Normal = if v_154 then true else false;
+  ns_St_Normal = if v_154 then St_SearchLine else St_Normal;
+  v_154 = (v_152 or v_153);
+  v_153 = ((bow when St_Normal(ck_1)) & (ir when St_Normal(ck_1)));
+  v_152 = not(v_151);
+  v_151 = (fold ((or)())<<5>>)(())((sen_binary when St_Normal(ck_1)), false);
+  r_5 = (r when St_Normal(ck_1));
+  r_6 = (r when St_Normal(ck_1));
+  v_r_St_SearchLine = 100;
+  v_l_St_SearchLine = ~-(100);
+  nr_St_SearchLine = if v_150 then true else false;
+  ns_St_SearchLine = if v_150 then St_Normal else St_SearchLine;
+  v_150 =
+    (fold ((or)())<<5>>)(())((sen_binary when St_SearchLine(ck_1)), false);
+  v_r_St_ObstacleAvoidance = ~-(80);
+  v_l_St_ObstacleAvoidance = 80;
+  tick = if v_147 then 25 else v_149;
+  v_149 = (v_148 - 1);
+  v_148 = pre tick;
+  v_147 = if v_146 then true else (r when St_ObstacleAvoidance(ck_1));
+  v_146 = true fby false;
+  nr_St_ObstacleAvoidance = if v_145 then true else false;
+  ns_St_ObstacleAvoidance =
+    if v_145 then St_FollowObstacle else St_ObstacleAvoidance;
+  v_145 = not(v_144);
+  v_144 =
+    (fold ((or)())<<5>>)
+      (())((sen_binary when St_ObstacleAvoidance(ck_1)), false);
+  v_r_St_FollowObstacle = 65;
+  v_l_St_FollowObstacle = 65;
+  tick_1 = if v_141 then 75 else v_143;
+  v_143 = (v_142 - 1);
+  v_142 = pre tick_1;
+  v_141 = if v_140 then true else (r when St_FollowObstacle(ck_1));
+  v_140 = true fby false;
+  nr_St_FollowObstacle = if v_139 then true else false;
+  ns_St_FollowObstacle = if v_139 then St_SearchObstac else St_FollowObstacle;
+  v_139 = (v_138 or (ir when St_FollowObstacle(ck_1)));
+  v_138 = (tick_1 = 0);
+  v_r_St_BackToLine = ~-(40);
+  v_l_St_BackToLine = 40;
+  tick_2 = if v_135 then 100 else v_137;
+  v_137 = (v_136 - 1);
+  v_136 = pre tick_2;
+  v_135 = if v_134 then true else (r when St_BackToLine(ck_1));
+  v_134 = true fby false;
+  nr_St_BackToLine = if v_133 then true else false;
+  ns_St_BackToLine = if v_133 then St_Normal else St_BackToLine;
+  v_133 = (tick_2 = 0);
+  v_r_St_SearchObstac = 70;
+  v_l_St_SearchObstac = ~-(70);
+  tick_3 = if v_130 then 30 else v_132;
+  v_132 = (v_131 - 1);
+  v_131 = pre tick_3;
+  v_130 = if v_129 then true else (r when St_SearchObstac(ck_1));
+  v_129 = true fby false;
+  nr_St_SearchObstac = if v_128 then true else false;
+  ns_St_SearchObstac = if v_128 then St_FollowObstacle else St_SearchObstac;
+  v_128 = (tick_3 = 0);
+  v_r_St_Right = ~-(70);
+  v_l_St_Right = 70;
+  tick_4 = if v_125 then 40 else v_127;
+  v_127 = (v_126 - 1);
+  v_126 = pre tick_4;
+  v_125 = if v_124 then true else (r when St_Right(ck_1));
+  v_124 = true fby false;
+  nr_St_Right = if v_123 then true else false;
+  ns_St_Right = if v_123 then St_FollowObstacle else St_Right;
+  v_123 = (tick_4 = 0);
+  v_r_St_BlackDot = 80;
+  v_l_St_BlackDot = 80;
+  tick_5 = if v_120 then 30 else v_122;
+  v_122 = (v_121 - 1);
+  v_121 = pre tick_5;
+  v_120 = if v_119 then true else (r when St_BlackDot(ck_1));
+  v_119 = true fby false;
+  nr_St_BlackDot = if v_118 then true else false;
+  ns_St_BlackDot = if v_118 then St_Left else St_BlackDot;
+  v_118 = (tick_5 <= 0);
+  v_r_St_Left = 100;
+  v_l_St_Left = ~-(100);
+  tick_6 = if v_115 then 60 else v_117;
+  v_117 = (v_116 - 1);
+  v_116 = pre tick_6;
+  v_115 = if v_114 then true else (r when St_Left(ck_1));
+  v_114 = true fby false;
+  nr_St_Left = if v_113 then true else false;
+  ns_St_Left = if v_113 then St_CheckLine else St_Left;
+  v_113 = (tick_6 <= 0);
+  v_r_St_CheckLine = ~-(100);
+  v_l_St_CheckLine = 100;
+  nr_St_CheckLine = if v_112 then true else false;
+  ns_St_CheckLine = if v_112 then St_Straight else St_CheckLine;
+  v_112 = (v_110 or v_111);
+  v_111 = (sen_binary when St_CheckLine(ck_1))[3];
+  v_110 = (v_108 or v_109);
+  v_109 = (sen_binary when St_CheckLine(ck_1))[1];
+  v_108 = (sen_binary when St_CheckLine(ck_1))[2];
+  (v_l_St_Straight, v_r_St_Straight) =
+    controller(pidvalue_1, (bow when St_Straight(ck_1))) every r_4;
+  pidvalue_1 = calculatePID(error_1) every r_3;
+  error_1 = if v_105 then 1023 else v_107;
+  v_107 = if v_106 then ~-(1023) else tmp_1;
+  v_106 = (tmp_1 < ~-(1023));
+  v_105 = (tmp_1 > 1023);
+  tmp_1 = (v_104 / 100);
+  v_104 = (v_102 + v_103);
+  v_103 = (100 * (sens4 when St_Straight(ck_1)));
+  v_102 = (v_100 + v_101);
+  v_101 = (50 * (sens3 when St_Straight(ck_1)));
+  v_100 = (v_98 + v_99);
+  v_99 = (~-(50) * (sens1 when St_Straight(ck_1)));
+  v_98 = (~-(100) * (sens0 when St_Straight(ck_1)));
+  tick_7 = if v_95 then 150 else v_97;
+  v_97 = (v_96 - 1);
+  v_96 = pre tick_7;
+  v_95 = if v_94 then true else (r when St_Straight(ck_1));
+  v_94 = true fby false;
+  nr_St_Straight = if v_93 then true else false;
+  ns_St_Straight = if v_93 then St_Normal else St_Straight;
+  v_93 = (tick_7 <= 0);
+  r_3 = (r when St_Straight(ck_1));
+  r_4 = (r when St_Straight(ck_1));
+  (v_l_St_Parken, v_r_St_Parken) =
+    controller(pidvalue_2, (bow when St_Parken(ck_1))) every r_2;
+  pidvalue_2 = calculatePID(error_2) every r_1;
+  error_2 = if v_90 then 1023 else v_92;
+  v_92 = if v_91 then ~-(1023) else tmp_2;
+  v_91 = (tmp_2 < ~-(1023));
+  v_90 = (tmp_2 > 1023);
+  tmp_2 = (v_89 / 100);
+  v_89 = (v_87 + v_88);
+  v_88 = (100 * (sens4 when St_Parken(ck_1)));
+  v_87 = (v_85 + v_86);
+  v_86 = (50 * (sens3 when St_Parken(ck_1)));
+  v_85 = (v_83 + v_84);
+  v_84 = (~-(50) * (sens1 when St_Parken(ck_1)));
+  v_83 = (~-(100) * (sens0 when St_Parken(ck_1)));
+  tick_8 = if v_80 then 350 else v_82;
+  v_82 = (v_81 - 1);
+  v_81 = pre tick_8;
+  v_80 = if v_79 then true else (r when St_Parken(ck_1));
+  v_79 = true fby false;
+  nr_St_Parken = if v_78 then true else false;
+  ns_St_Parken = if v_78 then St_CheckLeft else St_Parken;
+  v_78 = (tick_8 <= 0);
+  r_1 = (r when St_Parken(ck_1));
+  r_2 = (r when St_Parken(ck_1));
+  v_r_St_CheckLeft = 100;
+  v_l_St_CheckLeft = ~-(100);
+  tick_9 = if v_75 then 40 else v_77;
+  v_77 = (v_76 - 1);
+  v_76 = pre tick_9;
+  v_75 = if v_74 then true else (r when St_CheckLeft(ck_1));
+  v_74 = true fby false;
+  nr_St_CheckLeft = if v_73 then true else false;
+  ns_St_CheckLeft = if v_73 then St_CheckIR else St_CheckLeft;
+  v_73 = (tick_9 <= 0);
+  v_r_St_CheckIR = 0;
+  v_l_St_CheckIR = 0;
+  nr_St_CheckIR = if v_72 then true else false;
+  ns_St_CheckIR = if v_72 then St_GrandeFinale else St_CheckIR;
+  v_72 = not((ir when St_CheckIR(ck_1)));
+  v_r_St_CheckLineParking = ~-(100);
+  v_l_St_CheckLineParking = 100;
+  nr_St_CheckLineParking = if v_71 then true else false;
+  ns_St_CheckLineParking = if v_71 then St_Parken else St_CheckLineParking;
+  v_71 =
+    (fold ((or)())<<5>>)
+      (())((sen_binary when St_CheckLineParking(ck_1)), false);
+  v_r_St_GrandeFinale = 100;
+  v_l_St_GrandeFinale = 100;
+  tick_10 = if v_68 then 100 else v_70;
+  v_70 = (v_69 - 1);
+  v_69 = pre tick_10;
+  v_68 = if v_67 then true else (r when St_GrandeFinale(ck_1));
+  v_67 = true fby false;
+  nr_St_GrandeFinale = if v_66 then true else false;
+  ns_St_GrandeFinale = if v_66 then St_JustParking else St_GrandeFinale;
+  v_66 = (tick_10 <= 0);
+  v_r_St_JustParking = 0;
+  v_l_St_JustParking = 0;
+  nr_St_JustParking = if false then true else false;
+  ns_St_JustParking = if false then St_GrandeFinale else St_JustParking;
+  v_l =
+    merge ck_1
+      (St_JustParking -> v_l_St_JustParking)
+      (St_GrandeFinale -> v_l_St_GrandeFinale)
+      (St_CheckLineParking -> v_l_St_CheckLineParking)
+      (St_CheckIR -> v_l_St_CheckIR)(St_CheckLeft -> v_l_St_CheckLeft)
+      (St_Parken -> v_l_St_Parken)(St_Straight -> v_l_St_Straight)
+      (St_CheckLine -> v_l_St_CheckLine)(St_Left -> v_l_St_Left)
+      (St_BlackDot -> v_l_St_BlackDot)(St_Right -> v_l_St_Right)
+      (St_SearchObstac -> v_l_St_SearchObstac)
+      (St_BackToLine -> v_l_St_BackToLine)
+      (St_FollowObstacle -> v_l_St_FollowObstacle)
+      (St_ObstacleAvoidance -> v_l_St_ObstacleAvoidance)
+      (St_SearchLine -> v_l_St_SearchLine)(St_Normal -> v_l_St_Normal);
+  v_r =
+    merge ck_1
+      (St_JustParking -> v_r_St_JustParking)
+      (St_GrandeFinale -> v_r_St_GrandeFinale)
+      (St_CheckLineParking -> v_r_St_CheckLineParking)
+      (St_CheckIR -> v_r_St_CheckIR)(St_CheckLeft -> v_r_St_CheckLeft)
+      (St_Parken -> v_r_St_Parken)(St_Straight -> v_r_St_Straight)
+      (St_CheckLine -> v_r_St_CheckLine)(St_Left -> v_r_St_Left)
+      (St_BlackDot -> v_r_St_BlackDot)(St_Right -> v_r_St_Right)
+      (St_SearchObstac -> v_r_St_SearchObstac)
+      (St_BackToLine -> v_r_St_BackToLine)
+      (St_FollowObstacle -> v_r_St_FollowObstacle)
+      (St_ObstacleAvoidance -> v_r_St_ObstacleAvoidance)
+      (St_SearchLine -> v_r_St_SearchLine)(St_Normal -> v_r_St_Normal);
+  ns =
+    merge ck_1
+      (St_JustParking -> ns_St_JustParking)
+      (St_GrandeFinale -> ns_St_GrandeFinale)
+      (St_CheckLineParking -> ns_St_CheckLineParking)
+      (St_CheckIR -> ns_St_CheckIR)(St_CheckLeft -> ns_St_CheckLeft)
+      (St_Parken -> ns_St_Parken)(St_Straight -> ns_St_Straight)
+      (St_CheckLine -> ns_St_CheckLine)(St_Left -> ns_St_Left)
+      (St_BlackDot -> ns_St_BlackDot)(St_Right -> ns_St_Right)
+      (St_SearchObstac -> ns_St_SearchObstac)
+      (St_BackToLine -> ns_St_BackToLine)
+      (St_FollowObstacle -> ns_St_FollowObstacle)
+      (St_ObstacleAvoidance -> ns_St_ObstacleAvoidance)
+      (St_SearchLine -> ns_St_SearchLine)(St_Normal -> ns_St_Normal);
+  nr =
+    merge ck_1
+      (St_JustParking -> nr_St_JustParking)
+      (St_GrandeFinale -> nr_St_GrandeFinale)
+      (St_CheckLineParking -> nr_St_CheckLineParking)
+      (St_CheckIR -> nr_St_CheckIR)(St_CheckLeft -> nr_St_CheckLeft)
+      (St_Parken -> nr_St_Parken)(St_Straight -> nr_St_Straight)
+      (St_CheckLine -> nr_St_CheckLine)(St_Left -> nr_St_Left)
+      (St_BlackDot -> nr_St_BlackDot)(St_Right -> nr_St_Right)
+      (St_SearchObstac -> nr_St_SearchObstac)
+      (St_BackToLine -> nr_St_BackToLine)
+      (St_FollowObstacle -> nr_St_FollowObstacle)
+      (St_ObstacleAvoidance -> nr_St_ObstacleAvoidance)
+      (St_SearchLine -> nr_St_SearchLine)(St_Normal -> nr_St_Normal);
+  ck = St_Normal fby ns;
+  r_St_Normal = if v_65 then true else (pnr when St_Normal(ck));
+  s_St_Normal = if v_65 then St_BlackDot else St_Normal;
+  v_65 = (v_64 & (bow when St_Normal(ck)));
+  v_64 = (fold ((&)())<<3>>)(())(v_63, true);
+  v_63 = [v_60; v_61; v_62];
+  v_62 = (sen_binary when St_Normal(ck))[3];
+  v_61 = (sen_binary when St_Normal(ck))[2];
+  v_60 = (sen_binary when St_Normal(ck))[1];
+  r_St_SearchLine =
+    if (ir when St_SearchLine(ck))
+    then true
+    else (pnr when St_SearchLine(ck));
+  s_St_SearchLine =
+    if (ir when St_SearchLine(ck))
+    then St_ObstacleAvoidance
+    else St_SearchLine;
+  r_St_ObstacleAvoidance = (pnr when St_ObstacleAvoidance(ck));
+  s_St_ObstacleAvoidance = St_ObstacleAvoidance;
+  r_St_FollowObstacle =
+    if v_59 then true else (pnr when St_FollowObstacle(ck));
+  s_St_FollowObstacle = if v_59 then St_BackToLine else St_FollowObstacle;
+  v_59 =
+    (fold ((or)())<<5>>)(())((sen_binary when St_FollowObstacle(ck)), false);
+  r_St_BackToLine = (pnr when St_BackToLine(ck));
+  s_St_BackToLine = St_BackToLine;
+  r_St_SearchObstac =
+    if (ir when St_SearchObstac(ck))
+    then true
+    else (pnr when St_SearchObstac(ck));
+  s_St_SearchObstac =
+    if (ir when St_SearchObstac(ck)) then St_Right else St_SearchObstac;
+  r_St_Right = (pnr when St_Right(ck));
+  s_St_Right = St_Right;
+  r_St_BlackDot = (pnr when St_BlackDot(ck));
+  s_St_BlackDot = St_BlackDot;
+  r_St_Left = (pnr when St_Left(ck));
+  s_St_Left = St_Left;
+  r_St_CheckLine = (pnr when St_CheckLine(ck));
+  s_St_CheckLine = St_CheckLine;
+  r_St_Straight = if v_58 then true else (pnr when St_Straight(ck));
+  s_St_Straight = if v_58 then St_Parken else St_Straight;
+  v_58 = (v_57 & (bow when St_Straight(ck)));
+  v_57 = (fold ((&)())<<3>>)(())(v_56, true);
+  v_56 = [v_53; v_54; v_55];
+  v_55 = (sen_binary when St_Straight(ck))[3];
+  v_54 = (sen_binary when St_Straight(ck))[2];
+  v_53 = (sen_binary when St_Straight(ck))[1];
+  r_St_Parken = (pnr when St_Parken(ck));
+  s_St_Parken = St_Parken;
+  r_St_CheckLeft = (pnr when St_CheckLeft(ck));
+  s_St_CheckLeft = St_CheckLeft;
+  r_St_CheckIR =
+    if (ir when St_CheckIR(ck)) then true else (pnr when St_CheckIR(ck));
+  s_St_CheckIR =
+    if (ir when St_CheckIR(ck)) then St_CheckLineParking else St_CheckIR;
+  r_St_CheckLineParking = (pnr when St_CheckLineParking(ck));
+  s_St_CheckLineParking = St_CheckLineParking;
+  r_St_GrandeFinale = (pnr when St_GrandeFinale(ck));
+  s_St_GrandeFinale = St_GrandeFinale;
+  r_St_JustParking = (pnr when St_JustParking(ck));
+  s_St_JustParking = St_JustParking;
+  s =
+    merge ck
+      (St_JustParking -> s_St_JustParking)
+      (St_GrandeFinale -> s_St_GrandeFinale)
+      (St_CheckLineParking -> s_St_CheckLineParking)
+      (St_CheckIR -> s_St_CheckIR)(St_CheckLeft -> s_St_CheckLeft)
+      (St_Parken -> s_St_Parken)(St_Straight -> s_St_Straight)
+      (St_CheckLine -> s_St_CheckLine)(St_Left -> s_St_Left)
+      (St_BlackDot -> s_St_BlackDot)(St_Right -> s_St_Right)
+      (St_SearchObstac -> s_St_SearchObstac)
+      (St_BackToLine -> s_St_BackToLine)
+      (St_FollowObstacle -> s_St_FollowObstacle)
+      (St_ObstacleAvoidance -> s_St_ObstacleAvoidance)
+      (St_SearchLine -> s_St_SearchLine)(St_Normal -> s_St_Normal);
+  r =
+    merge ck
+      (St_JustParking -> r_St_JustParking)
+      (St_GrandeFinale -> r_St_GrandeFinale)
+      (St_CheckLineParking -> r_St_CheckLineParking)
+      (St_CheckIR -> r_St_CheckIR)(St_CheckLeft -> r_St_CheckLeft)
+      (St_Parken -> r_St_Parken)(St_Straight -> r_St_Straight)
+      (St_CheckLine -> r_St_CheckLine)(St_Left -> r_St_Left)
+      (St_BlackDot -> r_St_BlackDot)(St_Right -> r_St_Right)
+      (St_SearchObstac -> r_St_SearchObstac)
+      (St_BackToLine -> r_St_BackToLine)
+      (St_FollowObstacle -> r_St_FollowObstacle)
+      (St_ObstacleAvoidance -> r_St_ObstacleAvoidance)
+      (St_SearchLine -> r_St_SearchLine)(St_Normal -> r_St_Normal);
+  sen_binary = if v_30 then v_41 else v_52;
+  v_52 = [v_43; v_45; v_47; v_49; v_51];
+  v_51 = if v_50 then true else false;
+  v_50 = (sen4 < 650);
+  v_49 = if v_48 then true else false;
+  v_48 = (sen3 < 650);
+  v_47 = if v_46 then true else false;
+  v_46 = (sen2 < 650);
+  v_45 = if v_44 then true else false;
+  v_44 = (sen1 < 650);
+  v_43 = if v_42 then true else false;
+  v_42 = (sen0 < 650);
+  v_41 = [v_32; v_34; v_36; v_38; v_40];
+  v_40 = if v_39 then true else false;
+  v_39 = (sen4 > 450);
+  v_38 = if v_37 then true else false;
+  v_37 = (sen3 > 450);
+  v_36 = if v_35 then true else false;
+  v_35 = (sen2 > 450);
+  v_34 = if v_33 then true else false;
+  v_33 = (sen1 > 450);
+  v_32 = if v_31 then true else false;
+  v_31 = (sen0 > 450);
+  v_30 = not(bow);
+  sens4 = if bow then v_29 else sen4;
+  v_29 = (1023 - sen4);
+  sens3 = if bow then v_28 else sen3;
+  v_28 = (1023 - sen3);
+  sens2 = if bow then v_27 else sen2;
+  v_27 = (1023 - sen2);
+  sens1 = if bow then v_26 else sen1;
+  v_26 = (1023 - sen1);
+  sens0 = if bow then v_25 else sen0;
+  v_25 = (1023 - sen0);
+  bow = if v then false else v_24;
+  v_24 = (v_16 or v_23);
+  v_23 = (v_21 & v_22);
+  v_22 = (sen4 > 450);
+  v_21 = (v_19 & v_20);
+  v_20 = (sen0 > 450);
+  v_19 = (v_18 > 3800);
+  v_18 = (fold ((+)())<<5>>)(())(v_17, 0);
+  v_17 = [sen0; sen1; sen2; sen3; sen4];
+  v_16 = pre bow;
+  v = true fby false
+tel
+
